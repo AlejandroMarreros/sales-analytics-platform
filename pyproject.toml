@@ -19,6 +19,7 @@ dependencies = [
     "seaborn",
     "pypdf",
     "pyyaml",
+    "typer",
 ]
 
 [project.optional-dependencies]
@@ -33,3 +34,9 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[project.scripts]
+ml_platform = "ml_platform.cli:app"
+
+[tool.ruff.lint.per-file-ignores]
+"src/ml_platform/cli.py" = ["B008"]

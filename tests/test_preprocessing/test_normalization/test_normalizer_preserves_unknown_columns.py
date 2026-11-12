@@ -1,7 +1,7 @@
 import pandas as pd
-from ml_platform.preprocessing.normalization.normalizer import Normalizer
 
 from ml_platform.preprocessing.column_detection.detector import ColumnDetector
+from ml_platform.preprocessing.normalization.normalizer import Normalizer
 
 
 def _normalize(dataframe):

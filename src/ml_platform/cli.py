@@ -7,6 +7,7 @@ from ml_platform.ingestion.reader_factory import ReaderFactory
 from ml_platform.preprocessing.cleaning.cleaner import Cleaner
 from ml_platform.preprocessing.column_detection.detector import ColumnDetector
 from ml_platform.preprocessing.normalization.normalizer import Normalizer
+from ml_platform.preprocessing.quality.analyzer import QualityAnalyzer
 
 app = typer.Typer(
     help="Plataforma modular para ingestión, validación, limpieza y análisis de ventas.",
@@ -63,6 +64,17 @@ def analyze(path: Path) -> None:
     typer.echo(f"Costos totales: {total_costos:,.2f}")
     typer.echo(f"Utilidad: {utilidad:,.2f}")
     typer.echo(f"Margen: {margen:.2f}%")
+
+
+@app.command()
+def quality(path: Path) -> None:
+    """Analiza la calidad del archivo: nulos, cardinalidad, outliers."""
+    reader = ReaderFactory.create(path)
+    dataframe = reader.read(path)
+    report = QualityAnalyzer().analyze(dataframe)
+
+    typer.echo(f"Archivo: {path}")
+    typer.echo(report.to_markdown())
 
 
 @app.command()

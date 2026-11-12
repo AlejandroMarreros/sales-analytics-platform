@@ -97,3 +97,17 @@ def test_cli_analyze_fails_without_sales_column(tmp_path: Path) -> None:
     result = runner.invoke(app, ["analyze", str(csv)])
 
     assert result.exit_code == 1
+
+
+def test_cli_quality_reports_stats(tmp_path: Path) -> None:
+    csv = tmp_path / "ventas.csv"
+    csv.write_text(
+        "ventas,costos\n1000,600\n1500,\n",
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(app, ["quality", str(csv)])
+
+    assert result.exit_code == 0
+    assert "ventas" in result.stdout
+    assert "costos" in result.stdout

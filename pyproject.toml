@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ml-platform"
+version = "0.1.0"
+description = "Plataforma modular para análisis de ventas, rentabilidad y Machine Learning"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+
+dependencies = [
+    "numpy",
+    "pandas",
+    "openpyxl",
+    "scikit-learn",
+    "matplotlib",
+    "seaborn",
+    "pypdf",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

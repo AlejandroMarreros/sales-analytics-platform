@@ -1,0 +1,1190 @@
+    ML Platform — AVANCE 3
+    Estado consolidado, trabajo realizado y punto exacto para continuar
+
+    Fecha: 24 de septiembre de 2026
+    1. OBJETIVO GENERAL DEL PROYECTO
+
+    El proyecto se llama:
+
+    ml_platform
+
+    Ubicación:
+
+    /home/marruecos/Escritorio/mi_proyecto_datos/proyectos/ml_platform
+
+    El objetivo es construir una plataforma modular en Python para trabajar principalmente con datos empresariales y de ventas.
+
+    La plataforma deberá permitir posteriormente:
+
+        Leer datos desde diferentes formatos.
+
+        Validar los datos recibidos.
+
+        Detectar columnas y estructuras.
+
+        Normalizar nombres y formatos.
+
+        Limpiar los datos.
+
+        Analizar ventas.
+
+        Analizar costos.
+
+        Calcular utilidad y rentabilidad.
+
+        Analizar márgenes.
+
+        Analizar productos.
+
+        Analizar áreas.
+
+        Analizar personal.
+
+        Analizar tendencias.
+
+        Preparar datos para Power BI.
+
+        Incorporar Machine Learning posteriormente.
+
+        Trabajar con datos en español e inglés.
+
+    La arquitectura general definida es:
+
+    FUENTES DE DATOS
+           ↓
+       INGESTION
+           ↓
+       VALIDACIÓN
+           ↓
+    DETECCIÓN DE COLUMNAS
+           ↓
+     NORMALIZACIÓN
+           ↓
+        LIMPIEZA
+           ↓
+        ANÁLISIS
+           ↓
+       POWER BI
+           ↓
+    MACHINE LEARNING
+           ↓
+     PREDICCIONES
+
+    2. ESTADO REAL DEL PROYECTO
+
+    Al cerrar este avance:
+
+    ESTRUCTURA DEL PROYECTO       ✅
+    ENTORNO PYTHON                ✅
+    DEPENDENCIAS                  ✅
+    PYPROJECT                     ✅
+
+    INGESTION                     ✅ TERMINADA
+    VALIDACIÓN                    ⏳ SIGUIENTE
+    DETECCIÓN DE COLUMNAS         ⏳
+    NORMALIZACIÓN                 ⏳
+    LIMPIEZA                      ⏳
+    ANÁLISIS                      ⏳
+    POWER BI                      ⏳
+    MACHINE LEARNING              ⏳
+    PREDICCIONES                 ⏳
+
+    La capa de INGESTION fue implementada y posteriormente verificada mediante tests.
+    3. ENTORNO DE DESARROLLO
+
+    Sistema:
+
+    CachyOS Linux
+
+    Shell:
+
+    Fish 4.9.3
+
+    Python:
+
+    Python 3.14.7
+
+    Entorno virtual:
+
+    .venv
+
+    Activación:
+
+    source .venv/bin/activate.fish
+
+    Comprobación:
+
+    which python
+
+    Resultado observado:
+
+    /home/marruecos/Escritorio/mi_proyecto_datos/proyectos/ml_platform/.venv/bin/python
+
+    Versión observada:
+
+    Python 3.14.7
+
+    Pytest:
+
+    pytest 9.1.1
+
+    4. IMPORTANTE: SHELL FISH
+
+    El proyecto se está trabajando con Fish, no Bash.
+
+    Por eso algunos comandos de Bash no funcionan directamente.
+
+    Por ejemplo:
+
+    cat > archivo <<'EOF'
+    ...
+    EOF
+
+    produjo errores porque esa sintaxis heredoc pertenece a Bash y no debe asumirse compatible con Fish.
+
+    Para crear archivos de varias líneas se utilizó correctamente printf.
+
+    Esto debe tenerse en cuenta en futuras sesiones para no perder tiempo con comandos incompatibles con el shell.
+    5. DEPENDENCIAS
+
+    Las dependencias principales definidas anteriormente incluyen:
+
+    numpy
+    pandas
+    scikit-learn
+    openpyxl
+    matplotlib
+    seaborn
+    pypdf
+    pyyaml
+    pytest
+    pytest-cov
+
+    Se verificó previamente que las principales librerías podían importarse correctamente mediante:
+
+    python -c "import pandas, numpy, sklearn, openpyxl, matplotlib, seaborn, pypdf, yaml; print('Entorno ML funcionando correctamente')"
+
+    Resultado:
+
+    Entorno ML funcionando correctamente
+
+    6. ESTRUCTURA GENERAL DEL PROYECTO
+
+    La estructura definida incluye:
+
+    ml_platform/
+    ├── .venv/
+    ├── config/
+    │   ├── models.yaml
+    │   └── settings.yaml
+    │
+    ├── data/
+    │   ├── raw/
+    │   ├── interim/
+    │   ├── processed/
+    │   └── output/
+    │
+    ├── notebooks/
+    │
+    ├── scripts/
+    │   ├── inspect_data.py
+    │   ├── predict.py
+    │   └── train.py
+    │
+    ├── src/
+    │   └── ml_platform/
+    │
+    ├── tests/
+    │   ├── test_analysis/
+    │   ├── test_evaluation/
+    │   ├── test_filtering/
+    │   ├── test_ingestion/
+    │   ├── test_models/
+    │   └── test_preprocessing/
+    │
+    ├── docs/
+    │   └── PROJECT_STATUS.md
+    │
+    ├── .env.example
+    ├── .gitignore
+    ├── pyproject.toml
+    ├── requirements.txt
+    ├── README.md
+    ├── avance1.txt
+    ├── avance2.txt
+    └── avance3.txt
+
+    Algunas carpetas existen como estructura prevista pero todavía no tienen funcionalidades terminadas.
+
+    No se debe interpretar la existencia de una carpeta como que su módulo ya esté implementado.
+    7. INGESTION
+
+    La capa de INGESTION tenía como objetivo recibir diferentes formatos de archivos y convertirlos en estructuras que el resto de la plataforma pueda procesar.
+
+    Principalmente:
+
+    archivo
+       ↓
+    Reader
+       ↓
+    pandas.DataFrame
+
+    La capa utiliza una interfaz común:
+
+    BaseReader
+
+    y lectores especializados.
+    8. BaseReader
+
+    Archivo:
+
+    src/ml_platform/ingestion/base_reader.py
+
+    Define la interfaz común de los lectores mediante una clase abstracta.
+
+    Conceptualmente:
+
+    class BaseReader(ABC):
+        @abstractmethod
+        def read(...):
+            ...
+
+    Estado:
+
+    ✅ IMPLEMENTADO
+    ✅ VERIFICADO
+
+    9. CSVReader
+
+    Archivo:
+
+    src/ml_platform/ingestion/csv_reader.py
+
+    Responsabilidades comprobadas:
+
+        Comprobar que el archivo exista.
+
+        Comprobar que tenga extensión .csv.
+
+        Leer mediante pandas.read_csv.
+
+        Devolver un DataFrame.
+
+    Archivo de prueba utilizado:
+
+    data/raw/ventas_prueba.csv
+
+    Contenido utilizado:
+
+    fecha,producto,ventas,costos
+    2026-01-01,Producto A,1000,600
+    2026-01-02,Producto B,1500,900
+    2026-01-03,Producto A,1200,700
+
+    Tests:
+
+    test_csv_reader_reads_valid_csv
+    test_csv_reader_raises_error_when_file_does_not_exist
+    test_csv_reader_raises_error_for_invalid_extension
+
+    Resultado:
+
+    3/3 PASSED
+
+    Estado:
+
+    ✅ IMPLEMENTADO
+    ✅ VERIFICADO
+
+    10. ExcelReader
+
+    Archivo:
+
+    src/ml_platform/ingestion/excel_reader.py
+
+    Soporta:
+
+    .xlsx
+    .xls
+
+    Utiliza:
+
+    pandas.read_excel()
+
+    Archivo de prueba:
+
+    data/raw/ventas_prueba.xlsx
+
+    Tests:
+
+    test_excel_reader_reads_valid_excel
+    test_excel_reader_raises_error_when_file_does_not_exist
+    test_excel_reader_raises_error_for_invalid_extension
+
+    Resultado:
+
+    3/3 PASSED
+
+    Estado:
+
+    ✅ IMPLEMENTADO
+    ✅ VERIFICADO
+
+    11. JSONReader
+
+    Archivo:
+
+    src/ml_platform/ingestion/json_reader.py
+
+    Comprueba:
+
+        existencia;
+
+        extensión .json;
+
+    y utiliza:
+
+    pandas.read_json()
+
+    Archivo de prueba:
+
+    data/raw/ventas_prueba.json
+
+    Tests:
+
+    test_json_reader_reads_valid_json
+    test_json_reader_raises_error_when_file_does_not_exist
+    test_json_reader_raises_error_for_invalid_extension
+
+    Resultado:
+
+    3/3 PASSED
+
+    Estado:
+
+    ✅ IMPLEMENTADO
+    ✅ VERIFICADO
+
+    12. PDFReader
+
+    Archivo:
+
+    src/ml_platform/ingestion/pdf_reader.py
+
+    Utiliza:
+
+    from pypdf import PdfReader
+
+    Comportamiento actual:
+
+        Comprueba existencia.
+
+        Comprueba extensión .pdf.
+
+        Abre el PDF.
+
+        Extrae texto página por página.
+
+        Produce un DataFrame.
+
+    Estructura:
+
+    page
+    text
+
+    Archivo de prueba:
+
+    data/raw/ventas_prueba.pdf
+
+    Contenido de prueba:
+
+    Reporte de ventas de prueba
+    Producto A - Ventas: 1000
+    Producto B - Ventas: 1500
+
+    Se comprobó previamente que el PDF tenía una página y que el texto podía extraerse.
+
+    Tests:
+
+    test_pdf_reader_reads_valid_pdf
+    test_pdf_reader_raises_error_when_file_does_not_exist
+    test_pdf_reader_raises_error_for_invalid_extension
+
+    Resultado:
+
+    3/3 PASSED
+
+    Estado:
+
+    ✅ IMPLEMENTADO
+    ✅ VERIFICADO
+
+    Nota:
+
+    El PDFReader es una versión inicial.
+
+    Extraer texto de un PDF no significa necesariamente extraer correctamente tablas empresariales.
+
+    La extracción avanzada de tablas podrá abordarse posteriormente si el proyecto lo necesita.
+    13. TXTReader
+
+    Archivo:
+
+    src/ml_platform/ingestion/txt_reader.py
+
+    Lee el archivo de texto línea por línea y devuelve un DataFrame con:
+
+    text
+
+    Archivo de prueba:
+
+    data/raw/ventas_prueba.txt
+
+    Contenido final:
+
+    esto es un archivo de texto
+
+    Durante los tests existió inicialmente una diferencia entre:
+
+    esto es un archivo detexto
+
+    y:
+
+    esto es un archivo de texto
+
+    El test fue corregido y posteriormente pasó.
+
+    Tests:
+
+    test_txt_reader_reads_valid_txt
+    test_txt_reader_raises_error_when_file_does_not_exist
+    test_txt_reader_raises_error_for_invalid_extension
+
+    Resultado:
+
+    3/3 PASSED
+
+    Estado:
+
+    ✅ IMPLEMENTADO
+    ✅ VERIFICADO
+
+    14. ReaderFactory
+
+    Archivo:
+
+    src/ml_platform/ingestion/reader_factory.py
+
+    Su responsabilidad es seleccionar automáticamente el lector correspondiente según la extensión.
+
+    Mapeo actual:
+
+    .csv   → CSVReader
+    .xlsx  → ExcelReader
+    .xls   → ExcelReader
+    .json  → JSONReader
+    .pdf   → PDFReader
+    .txt   → TXTReader
+
+    La llamada conceptual es:
+
+    ReaderFactory.create(file_path)
+
+    Para formatos no soportados se produce:
+
+    ValueError
+
+    Tests:
+
+    test_reader_factory_creates_csv_reader
+    test_reader_factory_creates_excel_reader
+    test_reader_factory_creates_json_reader
+    test_reader_factory_creates_pdf_reader
+    test_reader_factory_creates_txt_reader
+    test_reader_factory_raises_error_for_unsupported_format
+
+    Resultado:
+
+    6/6 PASSED
+
+    Estado:
+
+    ✅ IMPLEMENTADO
+    ✅ VERIFICADO
+
+    15. TOTAL DE TESTS DE INGESTION
+
+    Se ejecutó:
+
+    pytest -v tests/test_ingestion
+
+    Resultado:
+
+    collected 21 items
+
+    21 passed
+
+    Distribución:
+
+    CSVReader       3
+    ExcelReader     3
+    JSONReader      3
+    PDFReader       3
+    TXTReader       3
+    ReaderFactory   6
+    ------------------
+    TOTAL          21
+
+    Por tanto:
+
+    INGESTION = 21/21 TESTS PASANDO
+
+    16. VERIFICACIÓN DE LA SUITE COMPLETA
+
+    Después también se ejecutó:
+
+    pytest -v
+
+    Resultado:
+
+    collected 21 items
+
+    21 passed
+    0 failed
+
+    Por tanto, la suite completa existente al momento de cerrar este avance pasa correctamente.
+
+    Esto debe comprobarse nuevamente al iniciar la próxima sesión.
+
+    Primer comando recomendado:
+
+    pytest -v
+
+    Si devuelve:
+
+    21 passed
+
+    se confirma que el estado conocido no se ha roto.
+    17. ARCHIVOS DE PRUEBA CREADOS
+
+    En:
+
+    data/raw/
+
+    se utilizaron archivos de prueba como:
+
+    ventas_prueba.csv
+    ventas_prueba.xlsx
+    ventas_prueba.json
+    ventas_prueba.pdf
+    ventas_prueba.txt
+
+    También se utilizaron rutas inexistentes deliberadamente para comprobar errores como:
+
+    FileNotFoundError
+
+    18. TESTS ACTUALES
+
+    La estructura comprobada es:
+
+    tests/
+    └── test_ingestion/
+        ├── test_csv_reader.py
+        ├── test_excel_reader.py
+        ├── test_json_reader.py
+        ├── test_pdf_reader.py
+        ├── test_reader_factory.py
+        └── test_txt_reader.py
+
+    Estado:
+
+    21 tests
+    21 passed
+    0 failed
+
+    19. DOCUMENTACIÓN DE CONTINUIDAD
+
+    Se creó:
+
+    docs/
+
+    y:
+
+    docs/PROJECT_STATUS.md
+
+    Su objetivo es servir como bitácora técnica del proyecto.
+
+    El archivo documenta:
+
+        objetivo;
+
+        arquitectura;
+
+        entorno;
+
+        ingestion;
+
+        lectores;
+
+        tests;
+
+        próximo paso.
+
+    Durante su creación hubo problemas debido al uso de sintaxis heredoc de Bash en Fish.
+
+    Finalmente se creó correctamente utilizando printf.
+
+    Existen pequeños problemas de formato textual en ese documento, como:
+
+    ingresos,costos
+    MachineLearning
+    deINGESTION
+
+    Estos problemas son documentales y no afectan al código ni a los tests.
+
+    Pueden corregirse posteriormente.
+    20. INGESTION ESTÁ TERMINADA
+
+    La conclusión de este avance es:
+
+    INGESTION
+
+    se considera terminada para el alcance actual.
+
+    Componentes:
+
+    BaseReader       ✅
+    CSVReader        ✅
+    ExcelReader      ✅
+    JSONReader       ✅
+    PDFReader        ✅
+    TXTReader        ✅
+    ReaderFactory    ✅
+    Tests            ✅ 21/21
+
+    No debemos volver a crear estos componentes en la próxima sesión salvo que un test futuro demuestre que existe un problema real.
+    21. SOPORTE MULTILINGÜE
+
+    El proyecto deberá trabajar posteriormente con:
+
+    Español
+    Inglés
+    Español + Inglés
+
+    Ejemplos previstos:
+
+    fecha          ↔ date
+    ventas         ↔ sales
+    ingresos       ↔ revenue
+    costos         ↔ costs
+    ganancia       ↔ profit
+    utilidad       ↔ profit
+    margen         ↔ margin
+    producto       ↔ product
+    empleado       ↔ employee
+    vendedor       ↔ salesperson
+    área           ↔ area
+    departamento   ↔ department
+
+    Se había previsto una futura capa:
+
+    src/ml_platform/language/
+    ├── detector.py
+    ├── dictionary.py
+    └── translator.py
+
+    Estado:
+
+    ⏳ NO IMPLEMENTADO
+
+    No debe considerarse parte de INGESTION.
+    22. SIGUIENTE ETAPA: VALIDACIÓN
+
+    La siguiente etapa de la arquitectura es:
+
+    INGESTION
+        ↓
+    VALIDACIÓN
+
+    VALIDACIÓN todavía no está implementada.
+
+    Antes de escribir código debemos definir su contrato.
+
+    Posibles responsabilidades que deberán estudiarse:
+
+        comprobar que el resultado de ingestion sea válido;
+
+        detectar DataFrames vacíos;
+
+        comprobar columnas requeridas;
+
+        comprobar tipos de datos;
+
+        detectar valores faltantes;
+
+        detectar fechas inválidas;
+
+        detectar valores numéricos inválidos;
+
+        detectar problemas básicos de estructura;
+
+        producir errores comprensibles.
+
+    IMPORTANTE:
+
+    Estas son posibilidades de diseño, no funcionalidades ya implementadas.
+
+    No se deben asumir como requisitos definitivos hasta definir el contrato de VALIDACIÓN.
+    23. SEGURIDAD DEL PROYECTO
+
+    La seguridad se considera una preocupación transversal del proyecto.
+
+    No se debe dejar toda la seguridad para el último momento.
+
+    Sin embargo, tampoco se debe implementar ahora un sistema de autenticación, autorización, API, usuarios o base de datos que todavía no forma parte de la arquitectura actual.
+
+    La estrategia será:
+
+    CADA ETAPA
+        ↓
+    FUNCIONALIDAD
+        +
+    VALIDACIÓN
+        +
+    SEGURIDAD CORRESPONDIENTE
+        +
+    TESTS
+
+    En la etapa de VALIDACIÓN se deberán considerar, según corresponda al diseño real:
+
+        validación estricta de entradas;
+
+        control de formatos;
+
+        control de estructuras inesperadas;
+
+        tratamiento seguro de archivos;
+
+        manejo correcto de errores;
+
+        evitar ejecutar contenido recibido como código;
+
+        evitar exposición innecesaria de datos en mensajes o logs;
+
+        no introducir secretos directamente en el código;
+
+        utilizar configuración apropiada;
+
+        controlar dependencias;
+
+        añadir tests para entradas potencialmente problemáticas.
+
+    La seguridad se irá incorporando conforme aparezcan componentes que la necesiten.
+    24. SEGURIDAD NO SIGNIFICA IMPLEMENTAR TODO AHORA
+
+    No debemos introducir prematuramente:
+
+    autenticación
+    usuarios
+    roles
+    sesiones
+    API
+    base de datos
+    CRUD
+    rate limiting
+
+    porque todavía no forman parte de la funcionalidad implementada.
+
+    Cuando el proyecto llegue a una aplicación/API/base de datos, se diseñarán los controles correspondientes.
+
+    Por ahora la prioridad es construir correctamente el núcleo de procesamiento de datos.
+    25. CRUD
+
+    CRUD significa:
+
+    Create
+    Read
+    Update
+    Delete
+
+    Actualmente:
+
+    CRUD = NO IMPLEMENTADO
+
+    Y tampoco está definido como una etapa actual del proyecto.
+
+    No debemos introducir CRUD simplemente por seguridad.
+
+    Si posteriormente se incorpora una base de datos o una API para administrar entidades, entonces se diseñará:
+
+    CRUD
+    +
+    VALIDACIÓN
+    +
+    AUTORIZACIÓN
+    +
+    SEGURIDAD
+    +
+    TESTS
+
+    Pero eso será una decisión de arquitectura futura.
+    26. METODOLOGÍA DE DESARROLLO
+
+    La metodología que funcionó durante INGESTION debe mantenerse.
+
+    DEFINIR
+       ↓
+    IMPLEMENTAR
+       ↓
+    PROBAR
+       ↓
+    DETECTAR ERROR
+       ↓
+    CORREGIR
+       ↓
+    TEST
+       ↓
+    TEST DE TODA LA SUITE
+       ↓
+    DOCUMENTAR
+       ↓
+    SIGUIENTE ETAPA
+
+    Para las siguientes capas:
+
+    CONTRATO
+       ↓
+    TESTS
+       ↓
+    IMPLEMENTACIÓN
+       ↓
+    SEGURIDAD
+       ↓
+    TESTS
+       ↓
+    VERIFICACIÓN GLOBAL
+       ↓
+    DOCUMENTACIÓN
+
+    No se deben implementar muchas funcionalidades simultáneamente.
+    27. ANÁLISIS EMPRESARIAL FUTURO
+
+    Una vez terminadas las capas previas, el sistema deberá poder analizar:
+    Ventas
+
+        ventas por día;
+
+        ventas por mes;
+
+        ventas por área;
+
+        ventas por producto;
+
+        ventas por empleado.
+    Rentabilidad
+
+    Utilidad = Ventas - Costos
+
+    Margen = Utilidad / Ventas
+
+    Posteriormente podrán incorporarse:
+
+        descuentos;
+
+        devoluciones;
+
+        otros costos;
+
+        otras reglas de negocio.
+    Tiempo
+
+    Se deberá poder trabajar posteriormente con:
+
+        último mes;
+
+        últimos 3 meses;
+
+        últimos 6 meses;
+
+        últimos 12 meses;
+
+        año actual;
+
+        año anterior;
+
+        rango personalizado.
+    Áreas
+
+    Se deberán analizar métricas como:
+
+        ventas;
+
+        costos;
+
+        utilidad;
+
+        margen;
+
+        evolución.
+    Personal
+
+    Se podrán analizar métricas como:
+
+        ventas;
+
+        contribución;
+
+        evolución;
+
+        cumplimiento.
+
+    Las conclusiones deberán basarse en métricas y datos, no en etiquetas subjetivas.
+    28. POWER BI
+
+    Power BI será principalmente la capa de visualización.
+
+    Flujo previsto:
+
+    Python
+       ↓
+    Dataset procesado
+       ↓
+    Power BI
+       ↓
+    KPIs
+    Gráficos
+    Filtros
+    Tendencias
+    Dashboards
+
+    Estado:
+
+    ⏳ NO IMPLEMENTADO
+
+    No se debe comenzar esta etapa todavía.
+    29. MACHINE LEARNING
+
+    Machine Learning se implementará después del análisis tradicional.
+
+    Flujo:
+
+    Datos históricos
+           ↓
+    Preprocesamiento
+           ↓
+    Features
+           ↓
+    Modelo ML
+           ↓
+    Evaluación
+           ↓
+    Predicción
+
+    Posibles aplicaciones futuras:
+
+        predicción de ventas;
+
+        predicción de demanda;
+
+        detección de patrones;
+
+        segmentación.
+
+    Estado:
+
+    ⏳ NO IMPLEMENTADO
+
+    Todavía no se ha entrenado ningún modelo.
+    30. QUÉ NO HACER EN LA PRÓXIMA SESIÓN
+
+    No volver a crear:
+
+    BaseReader
+    CSVReader
+    ExcelReader
+    JSONReader
+    PDFReader
+    TXTReader
+    ReaderFactory
+
+    No volver a crear sus tests básicos.
+
+    No comenzar todavía:
+
+    Power BI
+    Machine Learning
+    Interfaz web
+    Base de datos
+    CRUD
+    Predicciones
+
+    Tampoco asumir que VALIDACIÓN ya está implementada.
+    31. COMPROBACIÓN AL INICIAR LA PRÓXIMA SESIÓN
+
+    Desde:
+
+    ~/Escritorio/mi_proyecto_datos/proyectos/ml_platform
+
+    activar:
+
+    source .venv/bin/activate.fish
+
+    comprobar:
+
+    which python
+
+    y ejecutar:
+
+    pytest -v
+
+    El resultado esperado, según el estado actual, es:
+
+    21 passed
+    0 failed
+
+    Después revisar:
+
+    cat docs/PROJECT_STATUS.md
+
+    y, si es necesario:
+
+    ls -la
+
+    32. PUNTO EXACTO PARA CONTINUAR
+
+    El punto exacto del proyecto es:
+
+    FUENTES DE DATOS
+           ↓
+       INGESTION          ✅ TERMINADA
+           ↓
+       VALIDACIÓN         ← CONTINUAR AQUÍ
+           ↓
+    DETECCIÓN DE COLUMNAS
+           ↓
+     NORMALIZACIÓN
+           ↓
+        LIMPIEZA
+           ↓
+        ANÁLISIS
+           ↓
+       POWER BI
+           ↓
+    MACHINE LEARNING
+
+    La próxima sesión debe comenzar diseñando la capa de:
+
+    VALIDACIÓN
+
+    No escribiendo código inmediatamente.
+
+    Primero debemos definir:
+
+        Qué recibe VALIDACIÓN.
+
+        Qué debe comprobar.
+
+        Qué considera válido.
+
+        Qué errores debe producir.
+
+        Cómo deben tratarse los datos faltantes.
+
+        Qué tipos de datos son aceptables.
+
+        Qué reglas son genéricas.
+
+        Qué reglas serán específicas de negocio.
+
+        Qué controles de seguridad corresponden a esta etapa.
+
+        Qué tests demostrarán que realmente funciona.
+
+    Después:
+
+    DISEÑO
+       ↓
+    TESTS
+       ↓
+    IMPLEMENTACIÓN
+       ↓
+    SEGURIDAD
+       ↓
+    TESTS
+       ↓
+    PYTEST COMPLETO
+       ↓
+    DOCUMENTACIÓN
+
+    33. ESTADO FINAL DEL AVANCE 3
+
+    PROYECTO
+    │
+    ├── Arquitectura conceptual       ✅
+    ├── Entorno                       ✅
+    ├── Dependencias                 ✅
+    ├── pyproject.toml               ✅
+    │
+    ├── INGESTION
+    │   ├── BaseReader               ✅
+    │   ├── CSVReader                ✅
+    │   ├── ExcelReader              ✅
+    │   ├── JSONReader               ✅
+    │   ├── PDFReader                ✅
+    │   ├── TXTReader                ✅
+    │   ├── ReaderFactory            ✅
+    │   └── Tests                    ✅ 21/21
+    │
+    ├── VALIDACIÓN                   ⏳ SIGUIENTE
+    ├── DETECCIÓN DE COLUMNAS        ⏳
+    ├── NORMALIZACIÓN                ⏳
+    ├── LIMPIEZA                     ⏳
+    ├── ANÁLISIS                     ⏳
+    ├── POWER BI                     ⏳
+    └── MACHINE LEARNING             ⏳
+
+    Verificación final conocida:
+
+    pytest -v
+
+    21 passed
+    0 failed
+
+    34. CONTEXTO PARA LA PRÓXIMA SESIÓN
+
+    Texto de recuperación:
+
+        ML Platform tiene la capa de INGESTION implementada y verificada. Existen BaseReader, CSVReader, ExcelReader, JSONReader, PDFReader, TXTReader y ReaderFactory. Se crearon pruebas automáticas para los lectores y la ReaderFactory. La carpeta tests/test_ingestion tiene 21 tests y la suite completa conocida pasa con 21/21 tests. Los archivos de prueba se encuentran en data/raw/. No se debe rehacer INGESTION.
+
+        El siguiente bloque de trabajo es VALIDACIÓN. VALIDACIÓN todavía no está implementada. Antes de programarla hay que definir su contrato, crear los tests y decidir las reglas concretas. La seguridad debe incorporarse progresivamente en cada etapa según corresponda; no se debe dejar toda para el final ni implementar prematuramente componentes que todavía no existen. CRUD tampoco está implementado ni forma parte todavía de la arquitectura actual.
+
+        La metodología obligatoria del proyecto es: definir → testear → implementar → verificar → corregir → ejecutar toda la suite → documentar → continuar.
+
+        Al comenzar la próxima sesión, activar .venv, ejecutar pytest -v y confirmar el estado antes de tocar código. Si sigue dando 21 passed, comenzar directamente el diseño de VALIDACIÓN.
+
+    35. PRIMER PASO DE LA PRÓXIMA SESIÓN
+
+    Comando:
+
+    pytest -v
+
+    Si:
+
+    21 passed
+
+    entonces continuar con:
+
+    DISEÑO DE VALIDACIÓN
+
+    y no modificar INGESTION.
+    FIN DEL AVANCE 3
+    Qué debes hacer ahora
+
+    Guárdalo como:
+
+    avance3.txt
+
+    Y también podemos actualizar después docs/PROJECT_STATUS.md para que el archivo dentro del proyecto quede sincronizado con este avance.
+
+    Para la siguiente sesión, con avance3.txt + docs/PROJECT_STATUS.md, tendremos suficiente contexto para continuar desde VALIDACIÓN, sin volver a recorrer INGESTION.
+

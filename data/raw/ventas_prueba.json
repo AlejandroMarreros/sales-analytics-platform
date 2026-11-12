@@ -1,0 +1,5 @@
+[
+  {"fecha": "2026-01-01", "producto": "Producto A", "ventas": 1000, "costos": 600},
+  {"fecha": "2026-01-02", "producto": "Producto B", "ventas": 1500, "costos": 900},
+  {"fecha": "2026-01-03", "producto": "Producto A", "ventas": 1200, "costos": 700}
+]

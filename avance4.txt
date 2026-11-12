@@ -1,0 +1,893 @@
+ChatGPT dijo:
+
+Sí. Esto ya corresponde al AVANCE 4, porque desde el Avance 3 empezamos y terminamos una parte importante de VALIDACIÓN.
+
+No necesito que me pases los avances 1, 2 y 3 completos en la próxima sesión si guardas un avance4.txt bien consolidado como el que te voy a dejar abajo. Ese archivo debe incluir el contexto esencial de los anteriores y, sobre todo, el estado exacto actual.
+Estado actual
+
+Partimos del Avance 3 con:
+
+INGESTION ✅ → VALIDACIÓN ⏳
+
+Y ahora ya tenemos VALIDACIÓN implementada:
+
+    ValidationResult
+
+    reglas para tipo de DataFrame
+
+    DataFrame vacío
+
+    columnas duplicadas
+
+    valores faltantes
+
+    columnas requeridas
+
+    columnas numéricas
+
+    Validator como orquestador
+
+    tests unitarios de las reglas
+
+    tests de integración del Validator
+
+Además, acabamos de comprobar:
+
+    ruff check src tests → ✅
+
+    ruff format --check src tests → ✅
+
+    pytest --cov=src/ml_platform --cov-report=term-missing → 50 passed
+
+    cobertura total → 99%
+
+    único código sin cubrir: la línea raise NotImplementedError del método abstracto BaseReader.read.
+
+Y algo importante: el problema que tuviste al escribir rutas directamente en Fish no es un problema del proyecto. Para mostrar archivos usa cat, less, bat, sed, etc.; no escribas la ruta sola porque Fish intenta ejecutarla.
+
+Te recomiendo guardar exactamente este resumen como avance4.txt:
+AVANCE 4 — Estado consolidado de ML Platform
+ML Platform — AVANCE 4
+
+Fecha: 28 de septiembre de 2026
+1. Objetivo del proyecto
+
+El proyecto se llama ml_platform.
+
+Ubicación:
+
+/home/marruecos/Escritorio/mi_proyecto_datos/proyectos/ml_platform
+
+El objetivo es construir una plataforma modular en Python para trabajar con datos empresariales y de ventas.
+
+La arquitectura general definida es:
+
+FUENTES DE DATOS
+       ↓
+   INGESTION
+       ↓
+   VALIDACIÓN
+       ↓
+DETECCIÓN DE COLUMNAS
+       ↓
+ NORMALIZACIÓN
+       ↓
+    LIMPIEZA
+       ↓
+    ANÁLISIS
+       ↓
+   POWER BI
+       ↓
+MACHINE LEARNING
+       ↓
+ PREDICCIONES
+
+El proyecto se desarrolla progresivamente, evitando implementar funcionalidades futuras antes de definir su contrato.
+
+Metodología:
+
+DEFINIR
+   ↓
+TESTEAR
+   ↓
+IMPLEMENTAR
+   ↓
+VERIFICAR
+   ↓
+CORREGIR
+   ↓
+TEST DE TODA LA SUITE
+   ↓
+DOCUMENTAR
+   ↓
+SIGUIENTE ETAPA
+
+2. Entorno
+
+Sistema:
+
+CachyOS Linux
+
+Shell:
+
+Fish 4.9.3
+
+Python:
+
+Python 3.14.7
+
+Entorno virtual:
+
+.venv
+
+Activación:
+
+source .venv/bin/activate.fish
+
+Comprobación:
+
+which python
+
+Debe apuntar al Python dentro de:
+
+.venv/bin/python
+
+Pytest:
+
+pytest 9.1.1
+3. Importante: shell Fish
+
+El proyecto se trabaja con Fish, no Bash.
+
+No asumir compatibilidad con heredocs de Bash como:
+
+cat > archivo <<'EOF'
+...
+EOF
+
+En sesiones anteriores esta sintaxis produjo errores.
+
+Para crear archivos multilínea se ha utilizado printf.
+
+Cuando se quiera inspeccionar un archivo, NO ejecutar simplemente su ruta:
+
+src/ml_platform/preprocessing/validator.py
+
+Eso hace que Fish intente ejecutarlo y produzca:
+
+Comando desconocido / no es un archivo ejecutable.
+
+Para leer archivos utilizar, por ejemplo:
+
+cat src/ml_platform/preprocessing/validator.py
+
+o:
+
+less src/ml_platform/preprocessing/validator.py
+
+4. Estado general del proyecto
+
+ESTRUCTURA              ✅
+ENTORNO                 ✅
+DEPENDENCIAS            ✅
+PYPROJECT               ✅
+
+INGESTION               ✅ TERMINADA
+VALIDACIÓN              ✅ IMPLEMENTADA Y TESTEADA
+DETECCIÓN DE COLUMNAS   ⏳
+NORMALIZACIÓN           ⏳
+LIMPIEZA                ⏳
+ANÁLISIS                ⏳
+POWER BI                ⏳
+MACHINE LEARNING        ⏳
+PREDICCIONES            ⏳
+
+El siguiente bloque todavía no es detección de columnas.
+
+Primero debe revisarse y cerrar correctamente el contrato de VALIDACIÓN.
+5. INGESTION
+
+La capa de INGESTION está terminada para el alcance actual.
+
+Componentes:
+
+BaseReader       ✅
+CSVReader        ✅
+ExcelReader      ✅
+JSONReader       ✅
+PDFReader        ✅
+TXTReader        ✅
+ReaderFactory    ✅
+
+Responsabilidad general:
+
+ARCHIVO
+   ↓
+READER
+   ↓
+pandas.DataFrame
+
+BaseReader
+
+Archivo:
+
+src/ml_platform/ingestion/base_reader.py
+
+Define la interfaz abstracta común.
+
+Estado:
+
+✅ Implementado.
+
+La línea:
+
+raise NotImplementedError
+
+es la única línea de código que actualmente aparece sin cubrir en el reporte global de cobertura.
+
+Esto no representa un fallo funcional.
+CSVReader
+
+Archivo:
+
+src/ml_platform/ingestion/csv_reader.py
+
+Soporta:
+
+.csv
+
+Comprueba existencia y extensión y utiliza pandas.read_csv().
+
+Estado:
+
+✅ Implementado.
+ExcelReader
+
+Archivo:
+
+src/ml_platform/ingestion/excel_reader.py
+
+Soporta:
+
+.xlsx
+
+.xls
+
+Utiliza pandas.read_excel().
+
+Estado:
+
+✅ Implementado.
+JSONReader
+
+Archivo:
+
+src/ml_platform/ingestion/json_reader.py
+
+Soporta:
+
+.json
+
+Utiliza pandas.read_json().
+
+Estado:
+
+✅ Implementado.
+PDFReader
+
+Archivo:
+
+src/ml_platform/ingestion/pdf_reader.py
+
+Utiliza:
+
+from pypdf import PdfReader
+
+Extrae texto página por página y genera un DataFrame con:
+
+page
+text
+
+Es una implementación inicial.
+
+No debe asumirse que extrae correctamente tablas empresariales complejas.
+
+Estado:
+
+✅ Implementado para el alcance actual.
+TXTReader
+
+Archivo:
+
+src/ml_platform/ingestion/txt_reader.py
+
+Lee archivos de texto y devuelve un DataFrame con:
+
+text
+
+Estado:
+
+✅ Implementado.
+ReaderFactory
+
+Archivo:
+
+src/ml_platform/ingestion/reader_factory.py
+
+Mapeo:
+
+.csv   → CSVReader
+.xlsx  → ExcelReader
+.xls   → ExcelReader
+.json  → JSONReader
+.pdf   → PDFReader
+.txt   → TXTReader
+
+Formatos no soportados:
+
+ValueError
+
+Estado:
+
+✅ Implementado.
+6. VALIDACIÓN
+
+La capa de VALIDACIÓN comenzó después de terminar INGESTION.
+
+Actualmente está implementada.
+
+Arquitectura:
+
+DataFrame
+    ↓
+ Validator
+    ↓
+ reglas de validación
+    ↓
+ValidationResult
+
+Archivos principales:
+
+src/ml_platform/preprocessing/validation/result.py
+src/ml_platform/preprocessing/validation/rules.py
+src/ml_platform/preprocessing/validator.py
+
+7. ValidationResult
+
+Archivo:
+
+src/ml_platform/preprocessing/validation/result.py
+
+Clase:
+
+ValidationResult
+
+Es un dataclass(frozen=True).
+
+Contiene:
+
+errors: tuple[str, ...]
+warnings: tuple[str, ...]
+
+La propiedad:
+
+valid
+
+devuelve:
+
+not self.errors
+
+Por tanto:
+
+    sin errores → valid == True
+
+    con errores → valid == False
+
+    solamente warnings → valid == True
+
+También convierte errors y warnings a tuplas para evitar exponer colecciones mutables.
+
+Tests:
+
+5 tests.
+
+Estado:
+
+✅ Pasando.
+8. Reglas de validación implementadas
+
+Archivo:
+
+src/ml_platform/preprocessing/validation/rules.py
+validate_dataframe_type
+
+Comprueba que el valor recibido sea:
+
+pandas.DataFrame
+
+Si no:
+
+TypeError
+validate_dataframe_not_empty
+
+Comprueba que el DataFrame no esté vacío.
+
+Si está vacío:
+
+ValueError
+validate_unique_columns
+
+Comprueba que no existan columnas duplicadas.
+
+Si existen:
+
+ValueError
+validate_missing_values
+
+Cuenta valores faltantes utilizando:
+
+dataframe.isna().sum().sum()
+
+Los valores faltantes actualmente se consideran:
+
+warnings
+
+No invalidan por sí solos el DataFrame.
+
+Ejemplo conceptual:
+
+Se encontraron 1 valores faltantes
+
+validate_required_columns
+
+Recibe:
+
+required_columns: tuple[str, ...]
+
+Detecta columnas obligatorias ausentes.
+
+Devuelve mensajes de error.
+validate_numeric_columns
+
+Recibe:
+
+numeric_columns: tuple[str, ...]
+
+Utiliza:
+
+pd.to_numeric(..., errors="coerce")
+
+para detectar valores que no pueden convertirse a número.
+
+Las columnas que no existen se ignoran actualmente.
+
+Los valores no numéricos encontrados producen errores.
+9. Validator
+
+Archivo:
+
+src/ml_platform/preprocessing/validator.py
+
+Clase:
+
+Validator
+
+Es el orquestador de las reglas.
+
+Método:
+
+Validator().validate(
+    dataframe,
+    required_columns=(),
+    numeric_columns=(),
+)
+
+Flujo:
+
+1. comprobar tipo
+2. comprobar DataFrame vacío
+3. comprobar columnas duplicadas
+4. comprobar columnas requeridas
+5. comprobar columnas numéricas
+6. detectar valores faltantes
+7. construir ValidationResult
+
+Si el valor inicial no es un DataFrame, devuelve inmediatamente un ValidationResult con error.
+10. Tests de VALIDACIÓN
+
+Actualmente existen:
+
+tests/test_preprocessing/
+├── test_validation_missing.py
+├── test_validation_numeric.py
+├── test_validation_required_columns.py
+├── test_validation_result.py
+├── test_validation_rules.py
+└── test_validator.py
+
+Distribución actual:
+
+test_validation_missing.py       2
+test_validation_numeric.py       3
+test_validation_required_columns.py 2
+test_validation_result.py        5
+test_validation_rules.py        10
+test_validator.py                7
+-----------------------------------
+TOTAL VALIDACIÓN                29
+
+Todos están pasando.
+11. Test adicional de columnas numéricas
+
+Se añadió específicamente:
+
+def test_validate_numeric_columns_ignores_missing_columns():
+    dataframe = pd.DataFrame(
+        {
+            "ventas": [1000, 2000],
+        }
+    )
+
+    errors = validate_numeric_columns(
+        dataframe,
+        ("ventas", "costos"),
+    )
+
+    assert errors == ()
+
+Esto verifica que una columna incluida en numeric_columns pero ausente del DataFrame no genere por sí misma un error.
+
+También se añadió la prueba del Validator para detectar valores no numéricos:
+
+ventas = [1000, "no disponible"]
+
+El Validator produce un error asociado a ventas.
+12. Resultado actual de calidad
+
+Se ejecutó:
+
+ruff check src tests
+
+Resultado:
+
+All checks passed!
+
+Se ejecutó:
+
+ruff format --check src tests
+
+Resultado:
+
+65 files already formatted
+
+Se ejecutó:
+
+pytest --cov=src/ml_platform --cov-report=term-missing
+
+Resultado:
+
+50 passed
+
+Cobertura:
+
+TOTAL
+149 statements
+1 missed
+99% coverage
+
+La única línea no cubierta corresponde al:
+
+raise NotImplementedError
+
+de:
+
+BaseReader.read
+13. Estado de la suite
+
+Resultado actual conocido:
+
+50 passed
+0 failed
+99% coverage
+
+Esto reemplaza el antiguo estado de 21 tests del Avance 3.
+
+Ahora la suite tiene:
+
+21 tests de INGESTION
+29 tests de VALIDACIÓN
+----------------------
+50 tests totales
+
+14. Qué NO hacer
+
+No volver a crear:
+
+BaseReader
+CSVReader
+ExcelReader
+JSONReader
+PDFReader
+TXTReader
+ReaderFactory
+
+No rehacer sus tests básicos.
+
+No empezar todavía:
+
+Power BI
+Machine Learning
+Predicciones
+Interfaz web
+Base de datos
+CRUD
+API
+Autenticación
+
+salvo que la arquitectura se redefina explícitamente más adelante.
+15. Seguridad
+
+La seguridad sigue siendo transversal.
+
+No se debe implementar prematuramente una plataforma completa de usuarios, roles, API o autenticación.
+
+En VALIDACIÓN ya se aplican principios como:
+
+    validar tipos de entrada;
+
+    comprobar estructuras;
+
+    controlar errores;
+
+    evitar ejecutar contenido recibido;
+
+    no introducir secretos en código;
+
+    evitar exposición innecesaria de información;
+
+    añadir tests para entradas problemáticas.
+
+A medida que aparezcan archivos, APIs, bases de datos o servicios externos, se añadirán los controles correspondientes.
+16. Soporte multilingüe
+
+El proyecto deberá trabajar posteriormente con:
+
+Español
+Inglés
+Español + Inglés
+
+Ejemplos previstos:
+
+fecha        ↔ date
+ventas       ↔ sales
+ingresos     ↔ revenue
+costos       ↔ costs
+ganancia     ↔ profit
+utilidad     ↔ profit
+margen       ↔ margin
+producto     ↔ product
+empleado     ↔ employee
+vendedor     ↔ salesperson
+área         ↔ area
+departamento ↔ department
+
+Todavía no existe la capa:
+
+src/ml_platform/language/
+
+Estado:
+
+⏳ Pendiente.
+17. Próximas capas
+
+Después de cerrar VALIDACIÓN:
+
+INGESTION
+    ↓
+VALIDACIÓN
+    ↓
+DETECCIÓN DE COLUMNAS
+    ↓
+NORMALIZACIÓN
+    ↓
+LIMPIEZA
+    ↓
+ANÁLISIS
+
+La detección de columnas deberá estudiar posteriormente cómo identificar conceptos como:
+
+fecha
+ventas
+costos
+producto
+empleado
+área
+
+incluso cuando los nombres estén en español o inglés.
+
+Pero todavía NO debe implementarse sin definir primero su contrato.
+18. Punto exacto de continuación
+
+El proyecto se encuentra actualmente aquí:
+
+FUENTES DE DATOS
+       ↓
+INGESTION                 ✅
+       ↓
+VALIDACIÓN                ✅ IMPLEMENTADA
+       ↓
+DETECCIÓN DE COLUMNAS    ← PRÓXIMO BLOQUE
+       ↓
+NORMALIZACIÓN
+       ↓
+LIMPIEZA
+       ↓
+ANÁLISIS
+       ↓
+POWER BI
+       ↓
+MACHINE LEARNING
+       ↓
+PREDICCIONES
+
+Sin embargo, antes de pasar definitivamente a detección de columnas se debe revisar si el contrato actual de VALIDACIÓN está suficientemente definido.
+
+No asumir automáticamente que todo lo que actualmente existe representa el diseño final.
+19. Próxima sesión
+
+Al comenzar la próxima sesión:
+Paso 1
+
+Activar entorno:
+
+source .venv/bin/activate.fish
+
+Paso 2
+
+Comprobar Python:
+
+which python
+
+Paso 3
+
+Ejecutar:
+
+pytest -v
+
+Se espera actualmente:
+
+50 passed
+
+Paso 4
+
+Ejecutar:
+
+ruff check src tests
+
+Paso 5
+
+Ejecutar:
+
+ruff format --check src tests
+
+Paso 6
+
+Antes de escribir código, revisar el diseño de:
+
+DETECCIÓN DE COLUMNAS
+
+Definir:
+
+    qué recibe;
+
+    qué devuelve;
+
+    cómo identifica columnas;
+
+    cómo maneja español;
+
+    cómo maneja inglés;
+
+    cómo maneja nombres mixtos;
+
+    qué ocurre con columnas ambiguas;
+
+    qué ocurre si no encuentra una columna;
+
+    cómo comunica confianza o ambigüedad;
+
+    qué errores son de estructura;
+
+    qué reglas son genéricas;
+
+    qué reglas pertenecen al negocio;
+
+    qué tests deben demostrar el comportamiento.
+
+Después:
+
+DISEÑO
+   ↓
+TESTS
+   ↓
+IMPLEMENTACIÓN
+   ↓
+SEGURIDAD
+   ↓
+TESTS
+   ↓
+SUITE COMPLETA
+   ↓
+DOCUMENTACIÓN
+
+20. Resumen ejecutivo
+
+Estado actual:
+
+ARQUITECTURA             ✅
+ENTORNO                  ✅
+DEPENDENCIAS             ✅
+PYPROJECT                ✅
+
+INGESTION                ✅
+  BaseReader             ✅
+  CSVReader              ✅
+  ExcelReader            ✅
+  JSONReader             ✅
+  PDFReader              ✅
+  TXTReader              ✅
+  ReaderFactory           ✅
+  Tests                   ✅ 21
+
+VALIDACIÓN               ✅
+  ValidationResult        ✅
+  Reglas                  ✅
+  Validator               ✅
+  Tests                   ✅ 29
+
+TOTAL TESTS               50
+TESTS PASANDO             50
+TESTS FALLANDO            0
+COBERTURA                 99%
+
+DETECCIÓN DE COLUMNAS     ⏳ PRÓXIMO
+NORMALIZACIÓN             ⏳
+LIMPIEZA                  ⏳
+ANÁLISIS                  ⏳
+POWER BI                  ⏳
+MACHINE LEARNING          ⏳
+PREDICCIONES              ⏳
+
+Contexto de recuperación
+
+ML Platform ya tiene INGESTION completamente implementada y VALIDACIÓN implementada y testeada. INGESTION contiene BaseReader, CSVReader, ExcelReader, JSONReader, PDFReader, TXTReader y ReaderFactory. VALIDACIÓN contiene ValidationResult, reglas básicas y Validator. La suite actual tiene 50 tests y todos pasan. Ruff también pasa y la cobertura es 99%.
+
+No se debe rehacer INGESTION ni VALIDACIÓN sin una razón concreta.
+
+El próximo bloque es DETECCIÓN DE COLUMNAS. Antes de programarlo se debe definir su contrato y diseñar los tests.
+
+La metodología obligatoria sigue siendo:
+
+definir → testear → implementar → verificar → corregir → suite completa → documentar
+
+El proyecto utiliza Fish, por lo que los comandos deben ser compatibles con Fish.
+
+Para leer archivos usar cat, less, etc.; no ejecutar directamente las rutas de los archivos.
+
+El siguiente objetivo técnico es diseñar DETECCIÓN DE COLUMNAS considerando español, inglés, nombres mixtos, ambigüedad y columnas ausentes.
+FIN DEL AVANCE 4
+Qué guardar
+
+Haz:
+
+nano avance4.txt
+
+Pega el contenido anterior y guarda.
+
+Después, sí sería conveniente sincronizar también:
+
+docs/PROJECT_STATUS.md
+
+para que el estado dentro del proyecto diga 50 tests / VALIDACIÓN implementada / próximo paso detección de columnas.
+
+Y en la próxima sesión, con avance4.txt me basta para recuperar prácticamente todo el contexto importante. No necesitas pegarme los avances 1, 2 y 3 otra vez. Si además me muestras docs/PROJECT_STATUS.md, mejor, porque podremos comprobar que ambos documentos están sincronizados.

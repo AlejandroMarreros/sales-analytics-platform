@@ -30,6 +30,7 @@ def test_cli_analyze_computes_metrics(tmp_path: Path) -> None:
 
     result = runner.invoke(app, ["analyze", str(csv)])
 
+    assert result.exit_code == 0
     assert "2,500.00" in result.stdout
     assert "1,500.00" in result.stdout
     assert "1,000.00" in result.stdout
@@ -51,6 +52,39 @@ def test_cli_export_csv(tmp_path: Path) -> None:
 
     assert result.exit_code == 0
     assert output.exists()
+
+
+def test_cli_export_parquet(tmp_path: Path) -> None:
+    csv = tmp_path / "ventas.csv"
+    csv.write_text(
+        "ventas,costos\n1000,600\n1500,900\n",
+        encoding="utf-8",
+    )
+    output = tmp_path / "out.parquet"
+
+    result = runner.invoke(
+        app,
+        ["export", str(csv), "--output", str(output), "--format", "parquet"],
+    )
+
+    assert result.exit_code == 0
+    assert output.exists()
+
+
+def test_cli_export_unsupported_format_fails(tmp_path: Path) -> None:
+    csv = tmp_path / "ventas.csv"
+    csv.write_text(
+        "ventas,costos\n1000,600\n",
+        encoding="utf-8",
+    )
+    output = tmp_path / "out.xyz"
+
+    result = runner.invoke(
+        app,
+        ["export", str(csv), "--output", str(output), "--format", "xml"],
+    )
+
+    assert result.exit_code == 1
 
 
 def test_cli_analyze_fails_without_sales_column(tmp_path: Path) -> None:

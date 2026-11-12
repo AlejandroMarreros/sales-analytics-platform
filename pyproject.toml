@@ -20,6 +20,7 @@ dependencies = [
     "pypdf",
     "pyyaml",
     "typer",
+    "pyarrow",
 ]
 
 [project.optional-dependencies]

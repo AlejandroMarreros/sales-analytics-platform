@@ -4,6 +4,7 @@ from typing import ClassVar
 from .base_reader import BaseReader
 from .csv_reader import CSVReader
 from .excel_reader import ExcelReader
+from .file_limits import check_file_size
 from .json_reader import JSONReader
 from .pdf_reader import PDFReader
 from .txt_reader import TXTReader
@@ -33,7 +34,9 @@ class ReaderFactory:
             Instancia del lector correspondiente.
 
         Raises:
-            ValueError: Si el formato no está soportado.
+            ValueError: Si el formato no está soportado o el archivo
+                excede el tamaño máximo.
+            FileNotFoundError: Si el archivo no existe.
         """
         path = Path(file_path)
         extension = path.suffix.lower()
@@ -44,8 +47,9 @@ class ReaderFactory:
             supported = ", ".join(sorted(cls._READERS))
 
             raise ValueError(
-                f"Formato no soportado: '{extension}'. "
-                f"Formatos disponibles: {supported}"
+                f"Formato no soportado:'{extension}'. Formatos disponibles:{supported}"
             )
+
+        check_file_size(path)
 
         return reader_class()

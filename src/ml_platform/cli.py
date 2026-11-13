@@ -9,10 +9,29 @@ from ml_platform.preprocessing.column_detection.detector import ColumnDetector
 from ml_platform.preprocessing.normalization.normalizer import Normalizer
 from ml_platform.preprocessing.quality.analyzer import QualityAnalyzer
 
+FORBIDDEN_OUTPUT_PATHS = (
+    "/etc",
+    "/usr",
+    "/boot",
+    "/sys",
+    "/proc",
+    "/dev",
+    "/var/lib",
+)
+
 app = typer.Typer(
     help="Plataforma modular para ingestión, validación, limpieza y análisis de ventas.",
     no_args_is_help=True,
 )
+
+
+def _check_output_path(output: Path) -> None:
+    resolved = output.resolve()
+    for forbidden in FORBIDDEN_OUTPUT_PATHS:
+        if str(resolved).startswith(forbidden):
+            raise ValueError(
+                f"No se puede exportar a {forbidden} (path resuelto: {resolved})"
+            )
 
 
 def _load_and_prepare(path: Path) -> pd.DataFrame:
@@ -85,6 +104,8 @@ def export(
 ) -> None:
     """Exporta el DataFrame limpio a Parquet o CSV."""
     dataframe = _load_and_prepare(path)
+
+    _check_output_path(output)
 
     if fmt == "parquet":
         dataframe.to_parquet(output, index=False)

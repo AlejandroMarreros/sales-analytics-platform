@@ -111,3 +111,37 @@ def test_cli_quality_reports_stats(tmp_path: Path) -> None:
     assert result.exit_code == 0
     assert "ventas" in result.stdout
     assert "costos" in result.stdout
+
+
+def test_cli_export_rejects_forbidden_path(tmp_path: Path) -> None:
+    csv = tmp_path / "ventas.csv"
+    csv.write_text(
+        "ventas,costos\n1000,600\n",
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        ["export", str(csv), "--output", "/etc/passwd", "--format", "csv"],
+    )
+
+    assert result.exit_code != 0
+    assert result.exception is not None
+    assert "no se puede exportar" in str(result.exception).lower()
+
+
+def test_cli_export_accepts_normal_path(tmp_path: Path) -> None:
+    csv = tmp_path / "ventas.csv"
+    csv.write_text(
+        "ventas,costos\n1000,600\n",
+        encoding="utf-8",
+    )
+    output = tmp_path / "out.csv"
+
+    result = runner.invoke(
+        app,
+        ["export", str(csv), "--output", str(output), "--format", "csv"],
+    )
+
+    assert result.exit_code == 0
+    assert output.exists()
